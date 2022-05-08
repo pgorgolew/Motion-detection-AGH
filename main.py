@@ -55,27 +55,17 @@ def main():
         out.write(image)
 
         if debug:
+            titles = ["Frame1", "Frame2", "Frame1 and Frame2 diff", "Gray on diff", "Blurred grey",
+                      "Threshold", "Dilated with threshold", "Result"]
+            images = [frame1, frame2, diff, gray, blur, thresh, dilated, frame1]
+            images = [cv2.resize(image, DEBUG_SCREEN_SIZE) for image in images]
+            for title_and_image in zip(titles, images):
+                cv2.imshow(*title_and_image)
 
-            resized_frame1 = cv2.resize(frame1, DEBUG_SCREEN_SIZE)
-            resized_frame2 = cv2.resize(frame2, DEBUG_SCREEN_SIZE)
-            resized_diff = cv2.resize(diff, DEBUG_SCREEN_SIZE)
-            resized_gray = cv2.resize(gray, DEBUG_SCREEN_SIZE)
-            resized_blur = cv2.resize(blur, DEBUG_SCREEN_SIZE)
-            resized_thresh = cv2.resize(thresh, DEBUG_SCREEN_SIZE)
-            resized_dilated = cv2.resize(dilated, DEBUG_SCREEN_SIZE)
-            result = cv2.resize(frame1, DEBUG_SCREEN_SIZE)
-            cv2.imshow("Frame1", resized_frame1)
-            cv2.imshow("Frame2", resized_frame2)
-            cv2.imshow("Difference between frame1 and frame2", resized_diff)
-            cv2.imshow("Gray on diff image", resized_gray)
-            cv2.imshow("Blurred gray image", resized_blur)
-            cv2.imshow("Thresh image", resized_thresh)
-            cv2.imshow("Dilated image with thresh", resized_dilated)
-            cv2.imshow("result", result)
             cv2.waitKey(0)
         else:
             frame1 = cv2.resize(frame1, SCREEN_SIZE)
-            cv2.imshow("result", frame1)
+            cv2.imshow("Result", frame1)
 
         frame1 = frame2
         _, frame2 = cap.read()

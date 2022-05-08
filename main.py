@@ -48,8 +48,8 @@ def main():
                 continue
             else:
                 cv2.rectangle(frame1, (x, y), (x + w, y + h), (255, 0, 255), 3)
-                cv2.putText(frame1, "Status: {}".format('Movement'), (10, 20), cv2.FONT_HERSHEY_SIMPLEX,
-                            1, (0, 0, 255), 3)
+                cv2.putText(frame1, "Movement video status", (10, 20), cv2.FONT_HERSHEY_SIMPLEX,
+                            1, (0, 0, 0), 3)
 
         image = cv2.resize(frame1, SCREEN_SIZE)
         out.write(image)

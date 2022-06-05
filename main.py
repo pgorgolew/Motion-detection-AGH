@@ -42,14 +42,14 @@ def main():
         dilated = cv2.dilate(thresh, None, iterations=DILATED_ITRS)
         contours, _ = cv2.findContours(dilated, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
+        cv2.putText(frame1, "Movement video status", (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 3)
         for contour in contours:
             (x, y, w, h) = cv2.boundingRect(contour)
             if cv2.contourArea(contour) < smallest_area:
                 continue
             else:
                 cv2.rectangle(frame1, (x, y), (x + w, y + h), (255, 0, 255), 3)
-                cv2.putText(frame1, "Movement video status", (10, 20), cv2.FONT_HERSHEY_SIMPLEX,
-                            1, (0, 0, 0), 3)
+
 
         image = cv2.resize(frame1, SCREEN_SIZE)
         out.write(image)
@@ -70,7 +70,7 @@ def main():
         frame1 = frame2
         _, frame2 = cap.read()
 
-        if cv2.waitKeyEx(1) == ord('q') or frame2 is None:
+        if cv2.waitKey(7) == ord('q') or frame2 is None:
             break
 
     cv2.destroyAllWindows()

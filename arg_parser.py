@@ -24,11 +24,18 @@ def coords(s):
         raise argparse.ArgumentTypeError("Coordinates must be x,y or (x,y)")
 
 
+def link(s):
+    if s == "0":
+        return 0
+    else:
+        return s
+
+
 def get_args():
     arg_parser = argparse.ArgumentParser(description='''Motion detection''', )
 
     arg_parser.add_argument(
-        '-l', '--link', type=str, default='https://imageserver.webcamera.pl/rec/zakopane/latest.mp4',
+        '-l', '--link', type=link, default='https://imageserver.webcamera.pl/rec/zakopane/latest.mp4',
         help='Link to camera')
     arg_parser.add_argument(
         '-d', '--debug', type=str2bool, default=False, help='If running a debug mode')

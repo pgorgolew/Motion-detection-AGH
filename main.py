@@ -10,12 +10,15 @@ FPS = 20
 GAUSS_KERNEL_VAL = 3
 
 
+def calc_frame(mask, list_of_regions, a=255, b=-1):
+    for (mask_upper_left, mask_lower_right) in list_of_regions:
+        cv2.rectangle(mask, mask_upper_left, mask_lower_right, a, b)
+
+
 def main():
     args = get_args()
     debug = args.debug
     link = args.link
-
-
 
     cap = cv2.VideoCapture(link)
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
@@ -25,28 +28,32 @@ def main():
     # print(size)
     smallest_area = args.smallest_area * size[0] * size[1] // 1000
     print(smallest_area)
-    if args.mask_upper_left is not None and args.mask_lower_right is not None:
-        mask_upper_left = tuple(int(el_1 * el_2 / 100) for el_1, el_2 in zip(args.mask_upper_left, size))
-        mask_lower_right = tuple(int(el_1 * el_2 / 100) for el_1, el_2 in zip(args.mask_lower_right, size))
-        print(mask_lower_right, mask_upper_left)
-    else:
-        mask_upper_left = None
-        mask_lower_right = None
+
+    cord_ = tuple[int, int]
+    list_of_regions: list[tuple[cord_, cord_]] = []
+    for (upper_left_arg, lower_right_arg) in zip(args.mask_upper_left, args.mask_lower_right):
+        if upper_left_arg is not None and lower_right_arg is not None:
+            mask_upper_left = tuple(int(el_1 * el_2 / 100) for el_1, el_2 in zip(upper_left_arg, size))
+            mask_lower_right = tuple(int(el_1 * el_2 / 100) for el_1, el_2 in zip(lower_right_arg, size))
+            print(mask_lower_right, mask_upper_left)
+            list_of_regions.append((mask_upper_left, mask_lower_right))
+        else:
+            mask_upper_left = None
+            mask_lower_right = None
 
     _, frame1 = cap.read()
     _, frame2 = cap.read()
 
-    mask = None
-    if mask_lower_right is not None and mask_upper_left is not None:
-        mask = np.zeros(frame1.shape[:2], dtype="uint8")
-        cv2.rectangle(mask, mask_upper_left, mask_lower_right, 255, -1)
+    mask = np.zeros(frame1.shape[:2], dtype="uint8")
+    calc_frame(mask, list_of_regions)
+
 
     while cap.isOpened():
         # if mask is not None:
         frame1_with_mask = cv2.bitwise_and(frame1, frame1, mask=mask)
         frame2_with_mask = cv2.bitwise_and(frame2, frame2, mask=mask)
         diff = cv2.absdiff(frame1_with_mask, frame2_with_mask)
-        cv2.rectangle(frame1, mask_upper_left, mask_lower_right, (255, 0, 0), 3)
+        calc_frame(frame1, list_of_regions, (255, 0, 0), 3)
 
         gray = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
         blur = cv2.GaussianBlur(gray, (GAUSS_KERNEL_VAL, GAUSS_KERNEL_VAL), 0)

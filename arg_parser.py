@@ -14,14 +14,13 @@ def str2bool(v):
 
 def coords(s):
     try:
-        if s[0] == '(':
-            s = s[1:]
-        if s[-1] == ')':
-            s = s[:-1]
-        x, y = map(int, s.split(','))
-        return x, y
+        lista = []
+        for y in s.split(';'):
+            m = y.split(',')
+            lista.append((int(m[0][1:]), int(m[1][:-1])))
+        return lista
     except:
-        raise argparse.ArgumentTypeError("Coordinates must be x,y or (x,y)")
+        raise argparse.ArgumentTypeError("Coordinates must be (x,y) or (x,y);(x,y)")
 
 
 def link(s):
@@ -42,9 +41,13 @@ def get_args():
     arg_parser.add_argument(
         '-mul', '--mask-upper-left', type=coords, default=None, help='Upper-left point of rectangle to mask in %')
     arg_parser.add_argument(
-        '-mlr', '--mask-lower-right', type=coords, default=None, help='Upper-left point of rectangle to mask in %')
+        '-mlr', '--mask-lower-right', type=coords, default=None, help='Lower-right point of rectangle to mask in %')
     arg_parser.add_argument(
-        '-s', '--smallest_area', type=int, default=10, help='The smallest area to be considered as motion per mille')
+        '-s', '--smallest_area', type=int, default=1, help='The smallest area to be considered as motion per mille')
 
     args = arg_parser.parse_args()
     return args
+
+
+if __name__ == '__main__':
+    print(get_args())

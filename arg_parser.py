@@ -39,9 +39,9 @@ def get_args():
     arg_parser.add_argument(
         '-d', '--debug', type=str2bool, default=False, help='If running a debug mode')
     arg_parser.add_argument(
-        '-mul', '--mask-upper-left', type=coords, default=None, help='Upper-left point of rectangle to mask in %')
+        '-mul', '--mask-upper-left', type=coords, default=[(0,0)], help='Upper-left point of rectangle to mask in %')
     arg_parser.add_argument(
-        '-mlr', '--mask-lower-right', type=coords, default=None, help='Lower-right point of rectangle to mask in %')
+        '-mlr', '--mask-lower-right', type=coords, default=[(100,100)], help='Lower-right point of rectangle to mask in %')
     arg_parser.add_argument(
         '-s', '--smallest_area', type=int, default=1, help='The smallest area to be considered as motion per mille')
 

@@ -40,11 +40,11 @@ def get_args():
     arg_parser.add_argument(
         '-d', '--debug', type=str2bool, default=False, help='If running a debug mode')
     arg_parser.add_argument(
-        '-mul', '--mask-upper-left', type=coords, default=None, help='Upper-left point of rectangle to mask')
+        '-mul', '--mask-upper-left', type=coords, default=None, help='Upper-left point of rectangle to mask in %')
     arg_parser.add_argument(
-        '-mlr', '--mask-lower-right', type=coords, default=None, help='Upper-left point of rectangle to mask')
+        '-mlr', '--mask-lower-right', type=coords, default=None, help='Upper-left point of rectangle to mask in %')
     arg_parser.add_argument(
-        '-s', '--smallest_area', type=int, default=500, help='The smallest area to be considered as motion')
+        '-s', '--smallest_area', type=int, default=10, help='The smallest area to be considered as motion per mille')
 
     args = arg_parser.parse_args()
     return args

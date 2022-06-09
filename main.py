@@ -14,13 +14,24 @@ def main():
     args = get_args()
     debug = args.debug
     link = args.link
-    mask_upper_left = args.mask_upper_left
-    mask_lower_right = args.mask_lower_right
-    smallest_area = args.smallest_area
+
+
 
     cap = cv2.VideoCapture(link)
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     out = cv2.VideoWriter("output.mp4", fourcc, FPS, SCREEN_SIZE)
+
+    size = cap.get(cv2.CAP_PROP_FRAME_WIDTH), cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+    # print(size)
+    smallest_area = args.smallest_area * size[0] * size[1] // 1000
+    print(smallest_area)
+    if args.mask_upper_left is not None and args.mask_lower_right is not None:
+        mask_upper_left = tuple(int(el_1 * el_2 / 100) for el_1, el_2 in zip(args.mask_upper_left, size))
+        mask_lower_right = tuple(int(el_1 * el_2 / 100) for el_1, el_2 in zip(args.mask_lower_right, size))
+        print(mask_lower_right, mask_upper_left)
+    else:
+        mask_upper_left = None
+        mask_lower_right = None
 
     _, frame1 = cap.read()
     _, frame2 = cap.read()
@@ -31,11 +42,12 @@ def main():
         cv2.rectangle(mask, mask_upper_left, mask_lower_right, 255, -1)
 
     while cap.isOpened():
-        if mask is not None:
-            frame1 = cv2.bitwise_and(frame1, frame1, mask=mask)
-            frame2 = cv2.bitwise_and(frame2, frame2, mask=mask)
+        # if mask is not None:
+        frame1_with_mask = cv2.bitwise_and(frame1, frame1, mask=mask)
+        frame2_with_mask = cv2.bitwise_and(frame2, frame2, mask=mask)
+        diff = cv2.absdiff(frame1_with_mask, frame2_with_mask)
+        cv2.rectangle(frame1, mask_upper_left, mask_lower_right, (255, 0, 0), 3)
 
-        diff = cv2.absdiff(frame1, frame2)
         gray = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
         blur = cv2.GaussianBlur(gray, (GAUSS_KERNEL_VAL, GAUSS_KERNEL_VAL), 0)
         _, thresh = cv2.threshold(blur, TRESHOLD_VAL, 255, cv2.THRESH_BINARY)
@@ -66,6 +78,8 @@ def main():
         else:
             frame1 = cv2.resize(frame1, SCREEN_SIZE)
             cv2.imshow("Result", frame1)
+            # frame1_with_mask = cv2.resize(frame1_with_mask, SCREEN_SIZE)
+            # cv2.imshow("Result", frame1_with_mask)
 
         frame1 = frame2
         _, frame2 = cap.read()
